@@ -85,17 +85,14 @@ cd /etc/elasticsearch/cert/
 http.p12  http_ca.crt  transport.p12
 
 
-curl -k -u elastic:finopay https://10.140.9.99:9200
-curl -u elastic:finopay 10.140.9.93:9200/_cat/nodes
-
 curl -k http://10.140.9.83:9200/_cat/nodes
-curl -k -u elastic:finopay https://10.140.9.99:9200/_cat/nodes
-
-curl -k -u elastic:finopay http://10.140.9.99:9200/_cat/nodes
+curl -k -u elastic:psswd https://10.140.9.99:9200/_cat/nodes
 
 
 
-curl -k -u elastic:finopay https://10.140.9.83:9200/_cat/nodes
+
+
+
 curl 10.150.65.28:9200/_cat/indices
 curl 10.150.65.9:9200/books/_search?pretty
 curl -X GET "http://localhost:9200/_cluster/health?pretty"
@@ -107,7 +104,7 @@ GE /_cluster/stats
 GE /product/_settings
 
 Health Probe
-curl -k -u elastic:finopay https://10.150.65.6:9200/_cluster/health?pretty
+
 need to allow /_cluster/health to be publicly accessible
 
 curl 10.150.65.7:9200/_cat/nodes
