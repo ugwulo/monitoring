@@ -1,0 +1,72 @@
+X&%6YW+7ZOcB
+
+EventStore DB: 22.10.2~preview1 For Ubuntu 22.10.2~preview1
+
+https://configurator.eventstore.com/
+https://developers.eventstore.com/server/v24.10/configuration/#streaminfocachecapacity
+https://www.kurrent.io/event-sourcing
+
+#!/bin/bash
+
+curl -s https://packagecloud.io/install/repositories/EventStore/EventStore-OSS/script.deb.sh | sudo bash
+sudo apt-get install eventstore-oss=22.10.2~preview1
+
+sudo rm /etc/eventstore/eventstore.conf
+sudo vi /etc/eventstore/eventstore.conf
+
+node-1: 10.150.65.16
+node-2: 10.150.65.20
+node-3: 10.150.65.5
+
+---
+# Paths
+Db: /var/lib/eventstore
+Index: /var/lib/eventstore/index
+Log: /var/log/eventstore
+# Insecure mode
+Insecure: true
+
+# Network configuration
+IntIp: 10.150.65.5
+ExtIp: 10.150.65.5
+HttpPort: 2113
+IntTcpPort: 1112
+EnableExternalTcp: false
+EnableAtomPubOverHTTP: true
+
+# Cluster gossip
+ClusterSize: 3
+DiscoverViaDns: false
+GossipSeed: 10.150.65.16:2113,10.150.65.20:2113
+
+# Projections configuration
+RunProjections: All
+
+# Timeouts and intervals
+GossipIntervalMs: 2000
+GossipTimeoutMs: 3000
+IntTcpHeartbeatInterval: 5000
+IntTcpHeartbeatTimeout: 1000
+
+
+
+###########################
+# Enable on boot
+sudo /bin/systemctl daemon-reload
+sudo /bin/systemctl enable eventstore.service
+
+sudo systemctl start eventstore.service
+sudo systemctl status eventstore.service
+
+curl http://10.140.25.74:2113/web/index.html#/clusterstatus
+curl -i http://10.140.25.74:2113/info
+curl -i http://10.150.65.16:2113/gossip
+
+Health Check
+curl http://10.140.25.74:2113/health
+curl 10.150.65.27:2113/info
+
+# Uninstall
+sudo apt-get remove eventstoredb-ee -y
+sudo apt-get purge eventstoredb-ee -y
+ 
