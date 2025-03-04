@@ -1,0 +1,20 @@
+[Unit]
+Description=Thanos Query
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+User=root
+Group=root
+Type=simple
+ExecStart=/usr/local/bin/thanos query \
+     --http-address=0.0.0.0:10904 \
+     --grpc-address=0.0.0.0:10903 \
+     --endpoint=127.0.0.1:10901 \                        ## sidecar endpint
+     --endpoint=127.0.0.1:10905 \                        ## store endpoint
+     --endpoint=10.150.65.24:10901 \   ## 2nd thanos sidecar server ip sidecar endpint
+     --endpoint=10.150.65.24:10905 \     ## 2nd thanos sidecar server ip store endpoint
+     --query.replica-label=prometheus-1
+
+[Install]
+WantedBy=multi-user.target
