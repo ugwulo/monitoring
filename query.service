@@ -12,10 +12,10 @@ ExecStart=/usr/local/bin/thanos query \
      --grpc-address=0.0.0.0:10903 \
      --endpoint=127.0.0.1:10901 \
      --endpoint=127.0.0.1:10905 \
-     --endpoint=10.150.65.23:10901 \
-     --endpoint=10.150.65.23:10905 \
-     --endpoint=10.150.65.24:10901 \
-     --endpoint=10.150.65.24:10905 \
+     --endpoint=10.140.9.77:10901 \
+     --endpoint=10.140.9.77:10905 \
+     --endpoint=10.140.9.79:10901 \
+     --endpoint=10.140.9.79:10905 \
      --query.replica-label=prometheus-1
 
 [Install]
