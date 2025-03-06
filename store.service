@@ -4,11 +4,11 @@ Wants=network-online.target
 After=network-online.target
 
 [Service]
-User=root
-Group=root
+User=thanos
+Group=thanos
 Type=simple
 ExecStart=/usr/local/bin/thanos store \
-       --data-dir=/var/lib/prometheus-store/ \
+       --data-dir=/var/lib/prometheus/ \
        --objstore.config-file=/etc/prometheus/storage.yml \
        --http-address=0.0.0.0:10906 \
        --grpc-address=0.0.0.0:10905
