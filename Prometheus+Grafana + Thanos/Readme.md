@@ -12,3 +12,4 @@ https://www.liquidweb.com/blog/install-prometheus-node-exporter-on-linux-almalin
 
 
 Use Thanos, Cortex, or Remote Write to store data in Azure
+https://medium.com/@55_learning/prometheus-high-availability-with-thanos-caf00cfd3a7b 

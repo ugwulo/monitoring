@@ -53,10 +53,12 @@ sudo nano /etc/kibana/kibana.yml
 
 # Enable authentication
 #elasticsearch.username: "elastic"
-#elasticsearch.password: "finopayTest1"
+#elasticsearch.password: "psswd"
 
 #Version: 8.17.0
 
+sudo /usr/share/elasticsearch/bin/elasticsearch-setup-passwords interactive
+curl -k -u elastic:passwd http://localhost:9200/_cat/nodes
 
 Kiban Server
 Fin-prod-cbs

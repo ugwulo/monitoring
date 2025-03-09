@@ -13,6 +13,23 @@ sudo apt-get install prometheus -y
 #make promethues owner
 sudo chown -R prometheus:prometheus /etc/prometheus /var/lib/prometheus
 
+sudo chown -R root:root /etc/prometheus
+
+sudo chown -R prometheus:prometheus /etc/prometheus
+
+sudo rm /lib/systemd/system/prometheus.service
+
+sudo curl -L -o /lib/systemd/system/prometheus.service https://raw.githubusercontent.com/ugwulo/monitoring/main/prometheus.service
+
+sudo systemctl stop prometheus
+sudo nano /lib/systemd/system/prometheus.service
+
+sudo nano /etc/prometheus/prometheus.yml
+
+
+sudo nano /etc/systemd/system/prometheus.service
+sudo rm /etc/systemd/system/prometheus.service
+
 # Set up Prometheus as a service
 sudo tee /etc/systemd/system/prometheus.service > /dev/null <<EOL
 [Unit]
@@ -27,6 +44,8 @@ Type=simple
 ExecStart=/usr/bin/prometheus \
     --config.file=/etc/prometheus/prometheus.yml \
     --storage.tsdb.path=/var/lib/prometheus/ \
+    --storage.tsdb.min-block-duration=2h \
+    --storage.tsdb.max-block-duration=2h \
     --web.listen-address=0.0.0.0:9090 \
     --storage.tsdb.retention.time=90d \
     --web.enable-lifecycle
@@ -39,11 +58,11 @@ LimitNOFILE=65536
 WantedBy=multi-user.target
 EOL
 
+sudo systemctl daemon-reload && sudo systemctl enable prometheus
 
-sudo systemctl daemon-reload
-sudo systemctl enable prometheus
-sudo systemctl restart prometheus
+sudo systemctl restart prometheus && sudo systemctl status prometheus --no-pager
 
 # reload without downtime
+sudo systemctl stop prometheus --no-pager
 sudo systemctl status prometheus --no-pager
 curl -X POST http://localhost:9090/-/reload
