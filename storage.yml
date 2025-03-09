@@ -1,0 +1,8 @@
+type: AZURE
+config:
+  storage_account: "finngprodstatestorage"
+  container: "thanos-metrics"
+  max_retries: 3
+  reader_config:
+    max_retry_requests: 3
+  msi_resource: "https://finngprodstatestorage.blob.core.windows.net/"
