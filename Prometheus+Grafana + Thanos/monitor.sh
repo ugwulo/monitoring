@@ -1,3 +1,5 @@
+
+sudo tee monitor.sh > /dev/null <<EOL
 #!/bin/bash
 
 # Update the system
@@ -12,7 +14,7 @@ sudo add-apt-repository "deb https://packages.grafana.com/oss/deb stable main"
 sudo apt-get update -y && sudo apt-get install -y grafana
 
 #Starting the Grafana Service
-sudo systemctl status grafana-server
+sudo systemctl daemon-reload
 sudo systemctl enable grafana-server
 
 # Install Prometheus
@@ -21,7 +23,6 @@ echo "Installing Prometheus..."
 sudo apt-get install prometheus -y
 
 sudo systemctl daemon-reload
-sudo systemctl start prometheus
 sudo systemctl enable prometheus
 
 # Install Node Exporter
@@ -33,6 +34,10 @@ sudo mv node_exporter-1.6.1.linux-amd64/node_exporter /usr/local/bin/
 
 #Creating a node_exporter user to run the service
 sudo useradd -rs /bin/false node_exporter
+
+EOL
+
+sudo chmod +x monitor.sh && sudo ./monitor.sh
 
 # Set up Node Exporter as a service
 sudo tee /etc/systemd/system/node_exporter.service > /dev/null <<EOL
@@ -51,9 +56,12 @@ ExecStart=/usr/local/bin/node_exporter
 WantedBy=multi-user.target
 EOL
 
-sudo systemctl daemon-reload
-sudo systemctl start node_exporter
-sudo systemctl enable node_exporter
+sudo systemctl daemon-reload && sudo systemctl enable node_exporter
+sudo systemctl restart node_exporter
+
+sudo systemctl status -l node_exporter --no-pager
+
+sudo systemctl start prometheus
 
 #Configuring Node Exporter as a Prometheus target
 #sudo tee /etc/prometheus/prometheus.yml > /dev/null <<EOL

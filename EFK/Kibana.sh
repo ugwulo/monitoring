@@ -27,10 +27,10 @@ sudo /bin/systemctl daemon-reload
 sudo /bin/systemctl enable kibana.service
 
 # Start Kibana service
-# sudo systemctl restart kibana.service
+sudo systemctl restart kibana.service
 
 # Check Kibana service status
-# sudo systemctl status kibana.service --no-pager
+sudo systemctl status kibana.service --no-pager
 
 
 

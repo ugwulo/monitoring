@@ -67,7 +67,7 @@ server.publicBaseUrl: "http://10.150.65.44:5601/"
 
 # =================== System: Elasticsearch ===================
 # The URLs of the Elasticsearch instances to use for all your queries.
-elasticsearch.hosts: ["https://10.150.65.44:5601", "https://10.150.65.46:9200", "https://10.150.65.47:9200"]
+elasticsearch.hosts: ["https://10.150.65.44:9200", "https://10.150.65.46:9200", "https://10.150.65.47:9200"]
 
 # If your Elasticsearch is protected with basic authentication, these settings provide
 # the username and password that the Kibana server uses to perform maintenance on the Kibana

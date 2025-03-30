@@ -1,0 +1,45 @@
+external disk mounting
+
+
+# List disks to confirm the new one is attached
+lsblk
+
+# Create a partition on the new disk
+sudo fdisk /dev/sda
+# Press 'n' for new partition
+# Press 'p' for primary partition
+# Press '1' for first partition
+# Press 'Enter' to use default first sector
+# Press 'Enter' to use default last sector (full disk)
+# Press 'w' to write changes
+
+sudo tee mnt.sh > /dev/null <<EOL
+# Create filesystem
+sudo mkfs.ext4 /dev/sda1
+
+# Create mount point
+
+sudo mkdir /mnt/data
+
+# Mount the new disk
+sudo mount /dev/sda1 /mnt/data
+
+# Make mount persistent
+echo '/dev/sda1 /mnt/data ext4 defaults,nofail 0 2' | sudo tee -a /etc/fstab
+EOL
+
+sudo chmod +x mnt.sh && ./mnt.sh
+
+
+
+# Check disk partitions in detail
+sudo fdisk -l
+
+# Verify current mount points
+mount
+
+# Check disk UUID and filesystem information
+sudo blkid
+
+# Check disk usage
+df -h

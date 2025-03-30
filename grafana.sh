@@ -12,9 +12,9 @@ sudo add-apt-repository "deb https://packages.grafana.com/oss/deb stable main"
 sudo apt-get update -y && sudo apt-get install -y grafana
 
 #Starting the Grafana Service
-sudo systemctl daemon-reload
+sudo systemctl daemon-reload && sudo systemctl enable grafana-server
+
 sudo systemctl start grafana-server
-sudo systemctl enable grafana-server
 
 # sudo vim grafana.sh && sudo chmod +x grafana.sh
 

@@ -27,19 +27,29 @@ sudo apt-get update && sudo apt-get install -y elasticsearch
 sudo /bin/systemctl daemon-reload
 sudo /bin/systemctl enable elasticsearch.service
 
+# Configure data path
+sudo mkdir /mnt/data/elasticsearch
+
+sudo chown elasticsearch:elasticsearch /mnt/data/elasticsearch
+
+sudo chmod 2750 /mnt/data/elasticsearch
 
 ##############################################################
 
 https://evermight.com/setup-elasticsearch-cluster/
 
-vim elastic.sh && chmod +x elastic.sh
+sudo vim elastic.sh && sudo chmod +x elastic.sh && ./elastic.sh
 
 sudo nano /etc/elasticsearch/elasticsearch.yml
+
 cd /etc/elasticsearch/cert
 
 9GT>5'=b08]j
 
+
 # Start Elasticsearch service
+sudo nano /etc/elasticsearch/elasticsearch.yml
+
 sudo systemctl restart elasticsearch.service
 
 sudo systemctl start elasticsearch
@@ -55,10 +65,13 @@ elastic built-in superuser is : pNOwn_+MLSC0sv2G950B
 finopay
 
 ./elasticsearch-reset-password -i -u elastic
-es-gh-cluster
-10.150.65.44  node-1
-10.150.65.46  node-2
-10.150.65.47  node-3
+
+efk-ng-cluster
+10.140.9.83  node-1
+10.140.9.85  node-2
+10.140.9.86  node-3
+
+["10.140.9.83", "10.140.9.85", "10.140.9.86"]
 
 
 xpack.security.enabled: false
