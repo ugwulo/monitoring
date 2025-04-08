@@ -22,46 +22,50 @@ echo "Installing Prometheus..."
 # Add your Prometheus installation commands here
 sudo apt-get install prometheus -y
 
-sudo systemctl daemon-reload
-sudo systemctl enable prometheus
+sudo mkdir -p /mnt/data/prometheus 
 
-# Install Node Exporter
-cd /tmp
-echo "Installing Node Exporter..."
-wget https://github.com/prometheus/node_exporter/releases/download/v1.6.1/node_exporter-1.6.1.linux-amd64.tar.gz
-sudo tar -xvf node_exporter-1.6.1.linux-amd64.tar.gz
-sudo mv node_exporter-1.6.1.linux-amd64/node_exporter /usr/local/bin/
+sudo chown -R prometheus:prometheus /mnt/data/prometheus && sudo chmod -R 2775 /mnt/data/prometheus 
 
-#Creating a node_exporter user to run the service
-sudo useradd -rs /bin/false node_exporter
+# sudo chown prometheus:prometheus /etc/prometheus/storage.yml
 
 EOL
+
 
 sudo chmod +x monitor.sh && sudo ./monitor.sh
 
-# Set up Node Exporter as a service
-sudo tee /etc/systemd/system/node_exporter.service > /dev/null <<EOL
-[Unit]
-Description=Node Exporter
-Wants=network-online.target
-After=network-online.target
+sudo nano /lib/systemd/system/prometheus-node-exporter.service
 
-[Service]
-User=node_exporter
-Group=node_exporter
-Type=simple
-ExecStart=/usr/local/bin/node_exporter
+sudo systemctl daemon-reload && sudo systemctl enable prometheus-node-exporter
 
-[Install]
-WantedBy=multi-user.target
-EOL
+sudo systemctl restart prometheus-node-exporter
 
-sudo systemctl daemon-reload && sudo systemctl enable node_exporter
-sudo systemctl restart node_exporter
-
-sudo systemctl status -l node_exporter --no-pager
+sudo systemctl status -l prometheus-node-exporter --no-pager
 
 sudo systemctl start prometheus
+
+sudo systemctl status -l prometheus
+
+sudo systemctl restart grafana-server
+
+sudo systemctl status -l grafana-server --no-pager
+
+# Set up Node Exporter as a service
+# sudo tee /etc/systemd/system/node_exporter.service > /dev/null <<EOL
+# [Unit]
+# Description=Node Exporter
+# Wants=network-online.target
+# After=network-online.target
+
+# [Service]
+# User=node_exporter
+# Group=node_exporter
+# Type=simple
+# ExecStart=/usr/local/bin/node_exporter --web.listen-address=":9101"
+
+# [Install]
+# WantedBy=multi-user.target
+# EOL
+
 
 #Configuring Node Exporter as a Prometheus target
 #sudo tee /etc/prometheus/prometheus.yml > /dev/null <<EOL
@@ -74,11 +78,14 @@ sudo systemctl start prometheus
 
 #sudo systemctl restart prometheus
 
-# Final Message
-echo "Prometheus, Node Exporter, and Grafana have been installed and started successfully!"
+sudo systemctl stop node_exporter
+sudo systemctl disable node_exporter
+
+# Remove the binary
+sudo rm /usr/local/bin/node_exporter
 
 
-Add Push Gateway to collect logs from Pipeline runs or external sources
-Requires basic auth config for ssecure access, can also use nginx for reverse proxy
+sudo rm /etc/systemd/system/node_exporter.service
 
-Use AlertManager for push notification
+
+OTel collector setup

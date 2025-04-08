@@ -113,7 +113,6 @@ Sharepoint/one drive /Azure storage account - Pending
 
 kubectl delete pod solr-operator-zookeeper-operator-pre-delete-zf4g4 --namespace default --force --grace-period=0
 
-FwKDR3j:7T4u
 workloads-svc-connection
 
 -----xxxxxxxx-----

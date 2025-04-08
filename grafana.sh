@@ -29,5 +29,3 @@ sudo systemctl restart grafana-server
 
 Create a data source in grafana with the endpoint of the network load balancer 
 and the port exposed on it (querier port: 10904)
-
-LB IP http://10.150.65.21:10904/

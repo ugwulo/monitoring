@@ -1,3 +1,5 @@
+
+sudo tee kibana.sh > /dev/null <<EOL
 #!/bin/bash
 
 # Install the GPG key for Elastic
@@ -26,11 +28,18 @@ fi
 sudo /bin/systemctl daemon-reload
 sudo /bin/systemctl enable kibana.service
 
+sudo mkdir -p /mnt/data/log/kibana/
+sudo chown -R kibana:kibana /mnt/data/log/kibana/
+sudo chmod -R 2755 /mnt/data/log/kibana/
+EOL
+
+sudo chmod +x kibana.sh && ./kibana.sh
+
 # Start Kibana service
 sudo systemctl restart kibana.service
 
 # Check Kibana service status
-sudo systemctl status kibana.service --no-pager
+sudo systemctl status -l kibana.service --no-pager
 
 
 
@@ -39,8 +48,6 @@ sudo systemctl status kibana.service --no-pager
 sudo systemctl stop kibana.service
 
 sudo systemctl restart kibana.service
-
-vim kibana.sh && chmod +x kibana.sh
 
 #Open the Kibana configuration file for editing:
 sudo nano /etc/kibana/kibana.yml
@@ -62,11 +69,11 @@ curl -k -u elastic:passwd http://localhost:9200/_cat/nodes
 
 Kiban Server
 Fin-prod-cbs
-10.150.65.6
+10.150xx
 
-curl http://10.140.9.86:5601/
+curl -u elastic:fxxxx https://localhost:5601/
 
 cd /usr/share/kibana/bin/
 
 
-curl -X POST -u elastic:passwd 10.150.65.6:9200/_security/service/na/svc/credential/token/sample_token
+curl -X POST -u elastic:passwd 10.1xxx6:9200/_security/service/na/svc/credential/token/sample_token

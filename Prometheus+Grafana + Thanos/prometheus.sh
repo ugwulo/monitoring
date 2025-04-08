@@ -11,7 +11,7 @@ sudo apt-get install prometheus -y
 # sudo vim prometheus.sh && sudo chmod +x prometheus.sh
 
 #make promethues owner
-sudo chown -R prometheus:prometheus /etc/prometheus /var/lib/prometheus
+# sudo chown -R prometheus:prometheus /etc/prometheus /var/lib/prometheus
 
 #sudo chown -R root:root /etc/prometheus
 
@@ -49,9 +49,40 @@ EOL
 
 sudo nano /etc/prometheus/prometheus.yml
 
+# A scrape configuration containing exactly one endpoint to scrape:
+# Here it's Prometheus itself.
+scrape_configs:
+ # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+  - job_name: 'prometheus-3'
+
+ # Override the global default and scrape targets from this job every 5 seconds.
+scrape_interval: 5s
+scrape_timeout: 5s
+
+ # metrics_path defaults to '/metrics'
+ # scheme defaults to 'http'.
+
+static_configs: 
+ - targets: ['10.xxx:9090', '10xx:9090', '10xxx:9090']
+
+  - job_name: node
+ # If prometheus-node-exporter is installed, grab stats about the local
+ # machine by default.
+static_configs:
+ - targets: ['10.xxx:9100', '10.xxx:9100', '10xxx1:9100']
+
+  - job_name: 'otel-collector'
+scrape_interval: 10s
+static_configs:
+ - targets: ['<pod-ip>:9090']
+
+
 sudo systemctl daemon-reload && sudo systemctl enable prometheus
 
-sudo systemctl restart prometheus && sudo systemctl status prometheus --no-pager
+sudo systemctl restart prometheus && sudo systemctl status -l prometheus --no-pager
+
+sudo lsof -i :9100
+
 
 # reload without downtime
 sudo systemctl stop prometheus --no-pager

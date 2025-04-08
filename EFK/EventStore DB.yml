@@ -6,31 +6,32 @@ https://configurator.eventstore.com/
 https://developers.eventstore.com/server/v24.10/configuration/#streaminfocachecapacity
 https://www.kurrent.io/event-sourcing
 
+sudo tee event.sh > /dev/null <<EOL
 #!/bin/bash
 
 curl -s https://packagecloud.io/install/repositories/EventStore/EventStore-OSS/script.deb.sh | sudo bash
 
 sudo apt-get install eventstore-oss=22.10.2~preview1
 
-sudo rm /etc/eventstore/eventstore.conf
-
-sudo vi /etc/eventstore/eventstore.conf
-
 # Configure data path
-sudo mkdir /mnt/data/eventstore
+sudo mkdir -p /mnt/data/eventstore
+sudo chown -R eventstore:eventstore /mnt/data/eventstore
+sudo chmod -R 2750 /mnt/data/eventstore
 
-sudo chown eventstore:eventstore /mnt/data/eventstore
+# sudo rm /etc/eventstore/eventstore.conf
+sudo /bin/systemctl daemon-reload && sudo /bin/systemctl enable eventstore.service
 
-sudo chmod 2750 /mnt/data/eventstore
+EOL
+
+sudo chmod +x event.sh && ./event.sh
 
 sudo ls -l /mnt/data/eventstore
 
-node-2: 10.140.9.70
-node-1: 10.140.9.73
-node-3: 10.140.9.74
+node-1: 10.150.65.6233
+node-2: 10.150.65.5833
+node-3: 10.150.65.6833
 
-sudo vim event.sh && sudo chmod +x event.sh
-
+sudo tee /etc/eventstore/eventstore.conf > /dev/null <<EOL
 ---
 # Paths
 Db: /mnt/data/eventstore
@@ -40,8 +41,8 @@ Log: /var/log/eventstore
 Insecure: true
 
 # Network configuration
-IntIp: 10.140.9.74
-ExtIp: 10.140.9.74
+IntIp: 10.150.65.6833
+ExtIp: 10.150.65.6833
 HttpPort: 2113
 IntTcpPort: 1112
 EnableExternalTcp: false
@@ -50,7 +51,7 @@ EnableAtomPubOverHTTP: true
 # Cluster gossip
 ClusterSize: 3
 DiscoverViaDns: false
-GossipSeed: 10.140.9.70:2113,10.140.9.73:2113
+GossipSeed: 10.150.65.6233:2113,10.150.65.5833:2113
 
 # Projections configuration
 RunProjections: All
@@ -60,23 +61,23 @@ GossipIntervalMs: 2000
 GossipTimeoutMs: 3000
 IntTcpHeartbeatInterval: 5000
 IntTcpHeartbeatTimeout: 1000
-
+EOL
 
 
 ###########################
 # Enable on boot
-sudo /bin/systemctl daemon-reload && sudo /bin/systemctl enable eventstore.service
 
 sudo systemctl start eventstore.service
+
 sudo systemctl status eventstore.service --no-pager
 
-curl http://10.140.9.70:2113/web/index.html#/clusterstatus
-curl -i http://10.140.25.74:2113/info
-curl -i http://10.140.9.70:2113/gossip
+curl http://xx:2113/web/index.html#/clusterstatus
+curl -i http://10x.65:2113/info
+curl -i http://10.1xx2:2113/gossip
 
 Health Check
-curl http://10.140.9.70:2113/health
-curl 10.140.9.70:2113/info
+curl http://xxx:2113/health
+curl 10.xx.70:2113/info
 
 # Uninstall
 sudo apt-get remove eventstoredb-ee -y

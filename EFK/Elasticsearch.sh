@@ -1,3 +1,4 @@
+sudo tee elastic.sh > /dev/null <<EOL
 #!/bin/bash
 
 # Elasticsearch Installation
@@ -28,17 +29,18 @@ sudo /bin/systemctl daemon-reload
 sudo /bin/systemctl enable elasticsearch.service
 
 # Configure data path
-sudo mkdir /mnt/data/elasticsearch
+sudo mkdir -p /mnt/data/elasticsearch
 
-sudo chown elasticsearch:elasticsearch /mnt/data/elasticsearch
+sudo chown -R elasticsearch:elasticsearch /mnt/data/elasticsearch
 
-sudo chmod 2750 /mnt/data/elasticsearch
+sudo chmod -R 2750 /mnt/data/elasticsearch
+EOL
 
 ##############################################################
 
 https://evermight.com/setup-elasticsearch-cluster/
 
-sudo vim elastic.sh && sudo chmod +x elastic.sh && ./elastic.sh
+sudo chmod +x elastic.sh && ./elastic.sh
 
 sudo nano /etc/elasticsearch/elasticsearch.yml
 
@@ -55,23 +57,12 @@ sudo systemctl restart elasticsearch.service
 sudo systemctl start elasticsearch
 
 # Check Elasticsearch service status
-sudo systemctl status elasticsearch.service --no-pager
+sudo systemctl status -l elasticsearch.service --no-pager
 
 
+prod-gh-es-cluster
 
-prod-efk-cluster
-elastic built-in superuser is : pNOwn_+MLSC0sv2G950B
-
-finopay
-
-./elasticsearch-reset-password -i -u elastic
-
-efk-ng-cluster
-10.140.9.83  node-1
-10.140.9.85  node-2
-10.140.9.86  node-3
-
-["10.140.9.83", "10.140.9.85", "10.140.9.86"]
+["10.150.65.48:9300", "10.150.65.61:9300", "10.150.65.55:9300"]
 
 
 xpack.security.enabled: false

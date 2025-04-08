@@ -1,94 +1,59 @@
 Install elasticsearch
 enable on restart
 
+# Configure data path
+sudo mkdir -p /mnt/data/elasticsearch
+
+sudo chown -R elasticsearch:elasticsearch /mnt/data/elasticsearch
+
+sudo chmod -R 2750 /mnt/data/elasticsearch
+
+sudo ls -l /mnt/data/elasticsearch
+
+sudo chmod -R 2777 /nfs/export/cbs
+
 do not start the service, only start when done with configs here: sudo nano /etc/elasticsearch/elasticsearch.yml
 
 
-take note of elastic built-in superuser psswd : pNOwn_+MLSC0sv2G950B
+take note of elastic built-in superuser psswd : tadatada0B
 
-or change it from here > cd /usr/share/elasticsearch/bin/
-sudo ./elasticsearch-reset-password -i -u elastic
+or change it from here > 
+sudo /usr/share/elasticsearch/bin/elasticsearch-reset-password -i -u elastic
 
 -k flag skips verification due self signed certificate in use
-curl -k -u elastic:passwd http://10.150.65.44:9200/_cat/nodes
+curl -k -u elastic:passwd http://localhost:9200/_cat/nodes
+
+curl -k -u elastic:gxxxay http://localhost:9200/_cluster/health?pretty
 
 generate an enrollment token from node 1
 sudo /usr/share/elasticsearch/bin/elasticsearch-create-enrollment-token -s node
 
-# use atob("eyJ2ZXIiOiI4LjE0LjAiLCJhZHIiOlstt1LjY6OTIwMCJdLCJmZ3IiOiI3ZTgyMzk3M2YxZDFiNzlhNzA3OGJhODA1NjIzYjJjOGUzNTlmYjQxZDBmMWNiOGQzZTB
-# iMTU0Yjk2ODQ5NDEwIiwia2V5IjoiLUdoVl9KUttppZUc6OXFNQnM1UjRUb3FYSVhvMFloYmlYdyJ9")
+sudo /usr/share/elasticsearch/bin/elasticsearch-create-enrollment-token -s kibana
+
+# use atob("eyJ2ZXIiOiI4LjE0LjAiLCJhZHIiOlsixxxxxxxxxxxxOTIwMCJdLCJmZ3IiOiI3ZTgyMzk3M2YxZDFiNzlhNzA3OGJhODA1NjIzYjJjOGUzNTlmYjQxZDBmMWNiOGQzZTBiMTU0Yjk2ODQ5NDEwIiwia2V5IjoiLUdoVl9KUUJGdHExQxxxxxxxxxxxxxxx")
 # to decode the token
 
 # '{"ver":"8.14.0","adr":["10.150.65.6:9200"],
-# "fgr":"fffa805623b2c8e359fb41d0f1cb8d3e0b154b96849410",
-# "key":"-GhV_JQBFtq1AFr2zieG:9qMBs5ffXo0YhbiXw"}'
+# "fgr":"xxxxxxxxxxxxx9fb41d0f1cb8d3e0b154b96849410",
+# "key":"-xxxxxxxxtq1AFr2zieG:9qMBxxxxxxxxxxxxx0YhbiXw"}'
 
 enroll nodes 2, 3 etc
 do not configure the elasticsearch.yml yet
 
-Elasticsearch enrollment
-sudo /usr/share/elasticsearch/bin/elasticsearch-reconfigure-node --enrollment-token eyJ2ZXIggE2YmJlIiwia2V5IjoicVA4RExaVUJ2cnBsampleee
+NG pilot-es-cluster
+sudo /usr/share/elasticsearch/bin/elasticsearch-reconfigure-node --enrollment-token eyJ2ZXxxDJWUFl4bXRjQ1NEdyJ9
 
+NG efk-ng-cluster
+sudo /usr/share/elasticsearch/bin/elasticsearch-reconfigure-node --enrollment-token eyJ2ZXIiOiI4LjE0LjAiLCJhZHIiOlsiMTAuMTQwLjkuODM6OTIwMCJdLCJmZ3IiOiI5MxxxMzA0NzNiYjYwNGFlNjgzOWEzIiwia2V5IjoicDhmVzRKVUJ5YktBVxxxE8wUSJ9
 
-# Use a descriptive name for your cluster:
-#
-cluster.name: name_cluster
-#
-# ------------------------------------ Node ------------------------------------
-#
-# Use a descriptive name for the node:
-#
-node.name: node1
-#
+efk-gh-cluster
+sudo /usr/share/elasticsearch/bin/elasticsearch-reconfigure-node --enrollment-token eyJ2ZXIiOiI4LjE0LjAiLCJhZHIiOlsiMTAuMTQwLjkuOTk6OTIwMCJdLCJmZ3IiOiI2M2YxZmNkYWFkOTBlYzJhMzBhNDc2OWY4ZmE2ZWUxxxoiby1VSzU1VUJLS0xEZFBOYUdhOGM6aDFGVl9Hdxxx
 
-#
-path.data: /var/lib/elasticsearch
-#
-# Path to log files:
-#
-path.logs: /var/log/elasticsearch
-#
-# ----------------------------------- Memory -----------------------------------
+gh-prod-es-cluster
+sudo /usr/share/elasticsearch/bin/elasticsearch-reconfigure-node --enrollment-token eyJ2ZXIiOiI4LjE0LjAxxxxImc2cGNCcFlCa0xQTTA2YWdoXzNPOlNCaG5RWWlBU3gybFVrUmx3R2ktS1EifQ==
 
-#
-network.host: 0.0.0.0
-#
-# By default Elasticsearch listens for HTTP traffic on the first free port it
-# finds starting at 9200. Set a specific HTTP port here:
-#
-http.port: 9200
-
-
-#discovery.seed_hosts: ["host1", "host2"]
-#
-# Bootstrap the cluster using an initial set of master-eligible nodes:
-#
-
-#cluster.initial_master_nodes: ["node-1", "node-2"]
-
-
-# Enable security features
-xpack.security.enabled: true
-
-xpack.security.enrollment.enabled: true
-
-# Enable encryption for HTTP API client connections, such as Kibana, Logstash, and Agents
-xpack.security.http.ssl:
-  enabled: true
-  keystore.path: certs/http.p12
-
-# Enable encryption and mutual authentication between cluster nodes
-xpack.security.transport.ssl:
-  enabled: true
-  verification_mode: certificate
-  keystore.path: certs/transport.p12
-  truststore.path: certs/transport.p12
-
-cluster.initial_master_nodes: ["node1"]
-http.host: 0.0.0.0
-
-#----------------------- END SECURITY AUTO CONFIGURATION -------------------------
-
+gh-pilot-es-cluster
+sudo /usr/share/elasticsearch/bin/elasticsearch-reconfigure-node --enrollment-token eyJ2ZXIiOiI4LjE0LjAiLCJhZHIiOlsiMTAuMTQwLjkuNzE6OTIwMCJdLCJmZ3IiOiI5Njg2N2FhYzk4xxxxMjg3MWJjZGU3NzkwIiwia2V5IjoiUmJOVTU1VUJNWGRudW5uOGpxxx
 
 
 # ======================== Elasticsearch Configuration =========================
@@ -107,78 +72,42 @@ http.host: 0.0.0.0
 #
 # Use a descriptive name for your cluster:
 #
-cluster.name: pilot-efk-cluster
+cluster.name: efk-gh-cluster
 #
 # ------------------------------------ Node ------------------------------------
 #
 # Use a descriptive name for the node:
 #
+#
 node.name: node1
 #
-# Add custom attributes to the node:
+
 #
-#node.attr.rack: r1
-#
-# ----------------------------------- Paths ------------------------------------
-#
-# Path to directory where to store the data (separate multiple locations by comma):
-#
-path.data: /var/lib/elasticsearch
+path.data: /mnt/data/elasticsearch
+
 #
 # Path to log files:
 #
 path.logs: /var/log/elasticsearch
 #
 # ----------------------------------- Memory -----------------------------------
+
 #
-# Lock the memory on startup:
-#
-#bootstrap.memory_lock: true
-#
-# Make sure that the heap size is set to about half the memory available
-# on the system and that the owner of the process is allowed to use this
-# limit.
-#
-# Elasticsearch performs poorly when the system is swapping the memory.
-#
-# ---------------------------------- Network -----------------------------------
-#
-# By default Elasticsearch is only accessible on localhost. Set a different
-# address here to expose this node on the network:
 network.host: 0.0.0.0
 #
 # By default Elasticsearch listens for HTTP traffic on the first free port it
 # finds starting at 9200. Set a specific HTTP port here:
 #
 http.port: 9200
-#
-# For more information, consult the network module documentation.
-#
-# --------------------------------- Discovery ----------------------------------
-#
-# Pass an initial list of hosts to perform discovery when this node is started:
-# The default list of hosts is ["127.0.0.1", "[::1]"]
-#
-#discovery.seed_hosts: ["host1", "host2"]
+
+
+discovery.seed_hosts: ["x8:9300", "10.1x.61:9300", "10x5.55:9300"]
 #
 # Bootstrap the cluster using an initial set of master-eligible nodes:
 #
-cluster.initial_master_nodes: ["node1", "node2", "node3"]
-#
-# For more information, consult the discovery and cluster formation module documentation.
-#
-# ---------------------------------- Various -----------------------------------
-#
-# Allow wildcard deletion of indices:
-#
-#action.destructive_requires_name: false
 
-#----------------------- BEGIN SECURITY AUTO CONFIGURATION -----------------------
-#
-# The following settings, TLS certificates, and keys have been automatically      
-# generated to configure Elasticsearch security features on 12-02-2025 21:27:25
-#
-# --------------------------------------------------------------------------------
+cluster.initial_master_nodes: ["node1"]
+
 
 # Enable security features
 xpack.security.enabled: true
@@ -196,16 +125,14 @@ xpack.security.transport.ssl:
   verification_mode: certificate
   keystore.path: certs/transport.p12
   truststore.path: certs/transport.p12
-# Create a new cluster with the current node only
-# Additional nodes can still join the cluster later
-cluster.initial_master_nodes: ["node1"]
 
-# Allow HTTP API connections from anywhere
-# Connections are encrypted and require user authentication
+# cluster.initial_master_nodes: ["node1"]
 http.host: 0.0.0.0
 
-# Allow other nodes to join the cluster from anywhere
-# Connections are encrypted and mutually authenticated
-transport.host: 0.0.0.0
-
 #----------------------- END SECURITY AUTO CONFIGURATION -------------------------
+
+network.tcp.keep_alive: true
+network.tcp.keep_idle: 270
+network.tcp.keep_interval: 270
+network.tcp.keep_count: 3
+transport.ping_schedule: "270s"

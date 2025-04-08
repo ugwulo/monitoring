@@ -2,11 +2,21 @@ Add kibana
 
 Generate a service token
 
-curl -X POST -k -u elastic:passwd https://10.150.65.44:9200/_security/service/elastic/kibana/credential/token/token_name
+prod 
 
+curl -X POST -k -u elastic:psswy https://localhost:9200/_security/service/elastic/kibana/credential/token/prod_cbs_token
 
-sample token
------AAWVsYXN0aWMva2liYW5hL2doX3-------------BpbG90X2Nic190b2tlbjpOS21S
+Prod token
+AAEAAWVsYXN0aWMvxxxxxxxxxxxxxxx4YWNxxxxxxxxxxxx
+
+Pilot token
+AAEAAWVsYXxxxxxxxxxxx5c2t4cUJR
+
+pilot gh token
+AAEAAWVsYXN0xxxxxxxxxxxxxx90X2Nic190xxxxxxxxxxxxxxxxxxx
+
+prod gh token
+AAEAAWVxxxxxxxxxxxxxxva2VuOm1GT0I1Uy1ZUWwtbFowanNxxxxxxxxxxxxxxxx
 
 Add token
 cd /usr/share/kibana/bin/
@@ -14,11 +24,18 @@ sudo ./kibana-keystore add elasticsearch.serviceAccountToken
 
 Change ownership
 
+sudo mkdir /mnt/data/log/kibana/
+sudo chown -R kibana:kibana /mnt/data/log/kibana/
+sudo chmod 2755 /mnt/data/log/kibana/
+
 sudo chown -R kibana:kibana .
 
 
 Kibana Server
-http://10.150.65.6:5601/home
+prod-cbk
+curl http://10.150.65.6:5601/home
+
+
 
 
 #Open the Kibana configuration file for editing:
@@ -50,7 +67,7 @@ server.host: "0.0.0.0"
 
 # Specifies the public URL at which Kibana is available for end users. If
 # `server.basePath` is configured this URL should end with the same basePath.
-server.publicBaseUrl: "http://10.150.65.44:5601/"
+server.publicBaseUrl: "https://10.150.65.52:5601/"
 
 # The maximum payload size in bytes for incoming server requests.
 #server.maxPayload: 1048576
@@ -67,7 +84,8 @@ server.publicBaseUrl: "http://10.150.65.44:5601/"
 
 # =================== System: Elasticsearch ===================
 # The URLs of the Elasticsearch instances to use for all your queries.
-elasticsearch.hosts: ["https://10.150.65.44:9200", "https://10.150.65.46:9200", "https://10.150.65.47:9200"]
+elasticsearch.hosts: ["https://10.150xx:9200", "https://1xx:9200", "https://10.1xxx:9200"]
+
 
 # If your Elasticsearch is protected with basic authentication, these settings provide
 # the username and password that the Kibana server uses to perform maintenance on the Kibana
@@ -79,7 +97,7 @@ elasticsearch.hosts: ["https://10.150.65.44:9200", "https://10.150.65.46:9200", 
 # Kibana can also authenticate to Elasticsearch via "service account tokens".
 # Service account tokens are Bearer style tokens that replace the traditional username/password based configuration.
 # Use this token instead of a username/password.
-elasticsearch.serviceAccountToken: "AAEAAWVsYXN0aW-----------3BpbG90X2Nic190b2tlbjuy-------------ktWSW5vMDY3ZVN3"
+elasticsearch.serviceAccountToken: "AAxxxN0aWMva2liYW5hL3xxwtbFowanNxxxxx"
 
 # Time in milliseconds to wait for Elasticsearch to respond to pings. Defaults to the value of
 # the elasticsearch.requestTimeout setting.
@@ -130,7 +148,8 @@ logging:
   appenders:
     file:
       type: file
-      fileName: /var/log/kibana/kibana.log
+      #fileName: /var/log/kibana/kibana.log
+      fileName: /mnt/data/log/kibana/kibana.log
       layout:
         type: json
   root:
@@ -180,34 +199,3 @@ pid.file: /run/kibana/kibana.pid
 # Supported languages are the following: English (default) "en", Chinese "zh-CN", Japanese "ja-JP", French "fr-FR".
 # For more configuration options see the configuration guide for Kibana in
 # https://www.elastic.co/guide/index.html
-
-# =================== System: Kibana Server ===================
-# Kibana is served by a back end server. This setting specifies the port to use.
-server.port: 5601
-
-# Specifies the address to which the Kibana server will bind. IP addresses and host names are both valid values.
-# The default is 'localhost', which usually means remote machines will not be able to connect.
-# To allow connections from remote users, set this parameter to a non-loopback address.
-server.host: "0.0.0.0"
-
-# Enables you to specify a path to mount Kibana at if you are running behind a proxy.
-# Use the `server.rewriteBasePath` setting to tell Kibana if it should remove the basePath
-# from requests it receives, and to prevent a deprecation warning at startup.
-# This setting cannot end in a slash.
-#server.basePath: ""
-
-# Specifies whether Kibana should rewrite requests that are prefixed with
-# `server.basePath` or require that they are rewritten by your reverse proxy.
-# Defaults to `false`.
-#server.rewriteBasePath: false
-
-# Specifies the public URL at which Kibana is available for end users. If
-# `server.basePath` is configured this URL should end with the same basePath.
-server.publicBaseUrl: "http://10.150.65.6:5601/"
-
-# The maximum payload size in bytes for incoming server requests.
-#server.maxPayload: 1048576
-
-# The Kibana server's name. This is used for display purposes.
-#server.name: "your-hostname"
-

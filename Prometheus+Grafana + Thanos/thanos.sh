@@ -11,65 +11,76 @@ wget https://github.com/thanos-io/thanos/releases/download/v0.37.2/thanos-0.37.2
 
 sudo cp thanos-0.37.2.linux-amd64/thanos /usr/local/bin/thanos
 
+rm -rf thanos-0.37.2.linux-amd64 && rm -rf thanos-0.37.2.linux-amd64.tar.gz
+
 # configure Object Storage config file 
 
-finprodcbsmonitorstore
 
-# 8c8b9e34-8db6-41fa-935c-b5ebb49f8d7a
 type: AZURE
 config:
-  storage_account: "finngprodstatestorage"
+  storage_account: "fixxxxxtestoxxxe"
 #   user_assigned_id: "/subscriptions/f8acf074-408c-xxxxxx-c2b8b18ee696/resourcegroups/fin-pxxx-rg/providers/Microsoft.Compute/virtualMachineScaleSets/fin-prod-xxxxr"
-#   storage_account_key: "sv=2022-11-02&ss=bfqt&srt=c&sp=rwdlacupiytfx&se=2025-03-05T17:59:50Z&st=2025-03-05T09:59:50Z&sip=10.150.65.22&spr=https,http&sig=ifU%3D"
+#   storage_account_key: "sv=202xxxxxxxx09:59:50Z&sip=10.15xxxxxxx"
 #   container: "thanos-metrics"
 #   echo "sv=2022-11-02&ss=bfqt&srt=c&sp=rwdlacupiytfx&se=2025-03-05T17:59:50Z&st=2025-03-05T09:59:50Z&sip=10.150.65.22&spr=https,htFzEkU%3D" | base64 --decode
   max_retries: 3
   reader_config:
     max_retry_requests: 3
-finpilotcbsmonitorstore
-finprodcbsmonitorstore
-nslookup finpiloxxxxstore.blob.core.windows.net
+fixxxxbsmonitorxxe
+finxxxstoxxxxxe
+nslookup finpiloxxxxsxxe.blob.core.windows.net
 prefix: "metrics/"
 
 sudo tee /etc/prometheus/storage.yml > /dev/null <<EOL
 type: AZURE
 config:
-  storage_account: "finpilotcbsmonitorstore"
+  storage_account: "fxxxxxxxxxxtore"
+  container: "gh-thanos-metrics"
+  max_retries: 3
+  reader_config:
+    max_retry_requests: 3
+  # Explicitly set the MSI resource
+  msi_resource: "finprxxxxe.blob.core.windows.net/"
+EOL
+
+sudo tee /etc/prometheus/storage.yml > /dev/null <<EOL
+type: AZURE
+config:
+  storage_account: "finprodcbsmonitorstore"
   container: "thanos-metrics"
   max_retries: 3
   reader_config:
     max_retry_requests: 3
   # Explicitly set the MSI resource
-  msi_resource: "finpilotcbsmonitorstore.blob.core.windows.net/"
+  msi_resource: "fxxxxxxxxe.blob.core.windows.net/"
 EOL
 
-
 # id: fin-prod-pos-aks-agentpool
-# blob: finngprodstatestorage
+# blob: xxxxgxxxe
 
-# /subscriptions/f8acf074-408c-409d-8cbb-c2b8b18ee696/resourcegroups/fin-prod-pos-managed-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/fin-prod-pos-aks-agentpool
+# /subscriptions/fxxxxxxxx696/resourcegroups/fin-prod-pos-managed-rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/fin-prod-pos-aks-agentpool
 # Storage Blob Data Reader' role
 
 Sidecar service file 
 --objstore.config-file
 
-sudo useradd -rs /bin/false thanos
-sudo chown -R thanos:thanos /usr/local/bin/thanos && sudo chmod +x /usr/local/bin/thanos
-
-sudo usermod -aG prometheus thanos
-
-sudo usermod -aG prometheus node_exporter
-
+# sudo useradd -rs /bin/false thanos
+# sudo chown -R thanos:thanos /usr/local/bin/thanos && sudo chmod +x /usr/local/bin/thanos
+#&& sudo mkdir -p /mnt/data/prometheus/node-exporter/
+#sudo chown -R prometheus:prometheus /mnt/data/prometheus/node-exporter/
+# sudo usermod -aG prometheus thanos && sudo usermod -aG prometheus node_exporter
 cd /var/lib/prometheus
 #sudo chown -R thanos:thanos /var/lib/prometheus/meta-syncer/
 
-sudo mkdir /mnt/data/prometheus && sudo mkdir /mnt/data/prometheus/node-exporter/
+sudo mkdir -p /mnt/data/prometheus 
 
-sudo chown -R prometheus:prometheus /mnt/data/prometheus/node-exporter/
+sudo chown -R prometheus:prometheus /mnt/data/prometheus && sudo chmod -R 2775 /mnt/data/prometheus 
 
-sudo chown -R prometheus:prometheus /mnt/data/prometheus
+sudo chown prometheus:prometheus /etc/prometheus/storage.yml
 
-sudo chmod -R 2775 /mnt/data/prometheus 
+
+
+sudo usermod -aG prometheus thanos
 
 sudo systemctl restart store
 
@@ -120,8 +131,6 @@ sudo curl -L -o /etc/systemd/system/store.service https://raw.githubusercontent.
 
 sudo nano /etc/systemd/system/store.service
 
-sudo usermod -aG prometheus thanos
-
 
 journalctl -u thanos-sidecar --no-pager | tail -n 50
 
@@ -132,8 +141,8 @@ Wants=network-online.target
 After=network-online.target
 
 [Service]
-User=thanos
-Group=thanos
+User=prometheus
+Group=prometheus
 Type=simple
 ExecStart=/usr/local/bin/thanos store \
        --data-dir=/mnt/data/prometheus/ \
@@ -167,19 +176,19 @@ Wants=network-online.target
 After=network-online.target
 
 [Service]
-User=thanos
-Group=thanos
+User=prometheus
+Group=prometheus
 Type=simple
 ExecStart=/usr/local/bin/thanos query \
      --http-address=0.0.0.0:10904 \
      --grpc-address=0.0.0.0:10903 \
      --endpoint=127.0.0.1:10901 \
      --endpoint=127.0.0.1:10905 \
-     --endpoint=10.140.9.75:10901 \
-     --endpoint=10.140.9.75:10905 \
-     --endpoint=10.140.9.77:10901 \
-     --endpoint=10.140.9.77:10905 \
-     --query.replica-label=prometheus-1
+     --endpoint=10.140.9.108:10901 \
+     --endpoint=10.140.9.108:10905 \
+     --endpoint=10.140.9.109:10901 \
+     --endpoint=10.140.9.109:10905 \
+     --query.replica-label=prometheus-3
 
 [Install]
 WantedBy=multi-user.target
@@ -223,7 +232,7 @@ rule_files:
 scrape_configs:
   - job_name: 'prometheus'
     static_configs:
-      - targets: ['localhost:9090','10.150.65.24:9090']
+      - targets: ['localhost:9090','10.xxxxx:9090']
 
 #   - job_name: "azure_service_discovery"
 #     azure_sd_configs:
