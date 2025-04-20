@@ -97,7 +97,7 @@ curl -k -u elastic:psswd https://10.140.9.99:9200/_cat/nodes
 
 
 
-curl 10.150.65.28:9200/_cat/indices
+curl localhost:9200/_cat/indices
 curl 10.150.65.9:9200/books/_search?pretty
 curl -X GET "http://localhost:9200/_cluster/health?pretty"
 :9200/_cluster/stats

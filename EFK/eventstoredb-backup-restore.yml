@@ -1,0 +1,97 @@
+Migration & Backup and Restore Eventstoredb 
+https://docs.kurrent.io/server/v24.10/operations/backup.html#backup
+
+
+https://discuss.kurrent.io/t/eventstore-backup/1520/5 
+
+sudo nano /etc/eventstore/eventstore.conf
+
+# Backup Script
+
+#!/bin/bash
+
+# Backup target directory
+# BACKUP_DIR="/mnt/backup/eventstore-backup-$(date +%Y%m%d%H%M%S)"
+sudo mkdir -p /mnt/backup/eventstore-backup
+
+# 1. Copy index checkpoint files
+rsync -aIR /mnt/data/eventstore/./index/**/*.chk /mnt/backup/eventstore-backup
+
+sudo rsync -aIR /var/lib/eventstore/./index/**/*.chk /mnt/backup/eventstore-backup
+
+# 2. Copy index files excluding .chk
+sudo rsync -aI --exclude '*.chk' /var/lib/eventstore/index /mnt/backup/eventstore-backup
+
+# 3. Copy DB checkpoint files
+sudo rsync -aI /var/lib/eventstore/*.chk /mnt/backup/eventstore-backup
+
+# 4. Copy chunk files (they usually match chunk-*.0)
+sudo rsync -a /var/lib/eventstore/chunk-* /mnt/backup/eventstore-backup
+
+echo "Backup complete at $BACKUP_DIR"
+
+
+/mnt/data/eventstore
+/mnt/data/eventstore/index
+
+# Prod 
+Db: /var/lib/eventstore
+Index: /var/lib/eventstore/index
+
+# Restore Steps
+Stop EventStoreDB on all target cluster/nodes.
+sudo systemctl stop eventstore
+
+# Delete all data directories on the 3 servers /mnt/data/eventstore
+
+sudo rm -rf /var/lib/eventstore/*
+sudo rm -rf /mnt/data/eventstore/*
+
+sudo rm -rf /mnt/backup/eventstore-backup
+
+
+# Move backup data to new cluster nodes
+rsync -avz /mnt/backup/eventstore-backup/ user@ip:/mnt/data/eventstore/
+
+rsync -avz /mnt/backup/eventstore-backup/ user@ip:/mnt/data/eventstore
+
+
+# Copy as root
+rsync -avz --rsync-path="sudo rsync" /mnt/backup/eventstore-backup/ user@ip:/mnt/data/eventstore
+
+
+# Copy chaser.chk to truncate.chk:
+sudo cp /mnt/data/eventstore/chaser.chk /mnt/data/eventstore/truncate.chk
+
+sudo cp /var/lib/eventstore/chaser.chk /var/lib/eventstore/truncate.chk
+
+# chown -R eventstore:eventstore /mnt/data/eventstore
+
+# sudo usermod -aG eventstore finopay
+
+# chown -R eventstore:eventstore /var/lib/eventstore
+# chmod 644 /var/lib/eventstore
+# chmod 755 /var/lib/eventstore/index
+
+
+# restore data on all servers
+
+sudo systemctl restart eventstore.service
+
+sudo systemctl status -l eventstore.service --no-pager
+
+curl -i http://xxx:2113/gossip
+
+
+
+
+curl -i -d {} -X POST http://xxx.11:2113/admin/scavenge -u "admin:changeit"
+
+
+curl -i -X GET http://xxx:2113/admin/scavenge/current -u "admin:changeit"
+
+curl -i -X GET http://1xxxx.11:2113/admin/scavenge/current -u "admin:changeit"
+
+
+curl -i -X POST http://xxx65:2113/admin/scavenge?throttlePercent=50 -u "admin:changeit"
+

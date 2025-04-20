@@ -71,15 +71,26 @@ sudo systemctl start eventstore.service
 
 sudo systemctl status eventstore.service --no-pager
 
-curl http://xx:2113/web/index.html#/clusterstatus
+curl http://10.150.65.65:2113/web/index.html#/clusterstatus
+
 curl -i http://10x.65:2113/info
 curl -i http://10.1xx2:2113/gossip
 
+curl -kv http://10.150.65.65:2113/info
+curl -i http://10.150.65.45:2113/gossip
+
 Health Check
-curl http://xxx:2113/health
-curl 10.xx.70:2113/info
+curl http://10.150.65.65:2113/health
+curl 10.150.65.5:2113/info
 
 # Uninstall
 sudo apt-get remove eventstoredb-ee -y
 sudo apt-get purge eventstoredb-ee -y
  
+
+curl http:/10.150.65.65:2113/streams
+
+
+curl http://10.150.65.65:2113/streams/%24all/head/backward/20
+
+curl http://10.150.65.65:2113/streams/$all/head/backward/20

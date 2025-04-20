@@ -65,3 +65,13 @@ systemctl restart nfs-kernel-server
 nohup service nfs-kernel-server restart
 
 systemctl status -l nfs-kernel-server
+
+# Data Migration
+rsync -avz --rsync-path="sudo rsync" /export/cbs/LOG/ finopay@10.150.65.67:/nfs/export/cbs/LOG
+
+scp -r /export/cbs/LOG/* finopay@10.150.65.67:/nfs/export/cbs/LOG
+
+sudo exportfs -a && sudo systemctl restart nfs-kernel-server
+
+
+rsync -avz --rsync-path="sudo rsync" /export/cbs/LOG/CORE finopay@10.150.65.67:/nfs/export/cbs/LOG
